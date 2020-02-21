@@ -1,0 +1,38 @@
+{% extends "accounts/base_auth.html" %}
+{% load i18n core_tags staticfiles %}
+
+{% block title %}{% trans "Registration" %}{% endblock %}
+{% block extra_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block extra_js_header %}{% endblock %}
+
+{% block breadcrumb %}{% endblock %}
+
+{#{% block header_classes %}u-header--abs-top-md u-header--show-hide-md{% endblock %}#}
+{#{% block container_classes %}u-bg-light-blue-50{% endblock %}#}
+
+{% block content %}
+<header id="auth-header" class="auth-header" style="background-image: url({% static 'manage/images/illustration/img-1.png' %});">
+<h1>
+  <img src="{% static 'tabbli-logo-inverse-4.png' %}" alt="" height="72"> <span class="sr-only">{% trans "Sign Up" %}</span>
+</h1>
+<p> {% trans "Already have an account?" %} <a href="{% url 'login' %}">{% trans "Please Sign In" %}</a>
+</p>
+</header>
+
+{% if invite_code %}
+    {% if valid_invite %}
+    <form id="register-form" method="post" class="__action--ajax-submit auth-form" data-target="#register-form">
+        {% include "accounts/includes/register_form.html" %}
+    </form>
+    {% else %}
+        <div class="auth-form">
+            <div class="alert alert-danger">{% trans "Invitation code is not valid." %}</div>
+        </div>
+    {% endif %}
+{% else %}
+    <div class="auth-form">
+        <div class="alert alert-dark">{% trans "Only registration via invites is supported yet." %}</div>
+    </div>
+{% endif %}
+{% endblock %}

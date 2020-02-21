@@ -1,0 +1,10 @@
+{% load thumbnail %}
+{% if user.avatar %}
+<div class="user-avatar {{ extra_class }}">
+  <img src="{{ user.avatar|thumbnail_url:'avatar' }}" alt="">
+</div>
+{% else %}
+<div class="user-avatar {{ extra_class }}" style="background-color:{{ user.avatar_color }};color:white;font-size: {{ font_size|default:'1rem' }};text-align:center;">
+    <span style="vertical-align:middle;">{{ user.avatar_text }}</span>
+</div>
+{% endif %}

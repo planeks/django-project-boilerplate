@@ -1,0 +1,21 @@
+{% load core_tags %}
+{% if widget.is_initial and widget.value %}
+    <div class="mb-2">
+        <span>{{ widget.initial_text }}:</span>
+    {% with widget.value.path|fileext|lower as file_extension %}
+        {% if file_extension|in_list:'.jpg,.jpeg,.png' %}
+            <a href="{{ widget.value.url }}"><img src="{{ widget.value.url }}" target="_blank" style="max-width: 70px;"></a>
+        {% else %}
+            <a href="{{ widget.value.url }}">{{ widget.value.path|filename }}</a>
+        {% endif %}
+    {% endwith %}
+    {% if not widget.required %}
+        <span>
+            <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
+            <label for="{{ widget.checkbox_id }}">{{ widget.clear_checkbox_label }}</label>
+        </span>
+    {% endif %}<br>
+    </div>
+    {{ widget.input_text }}:
+{% endif %}
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>

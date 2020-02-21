@@ -1,0 +1,10 @@
+{% extends "email/base.txt" %}
+
+{% block content %}
+Hello from Tabbli
+
+You have an invite from user "{{ invite.sent_by }}". Please use the next link for register:
+
+{{ invite.get_registration_url }}
+
+{% endblock %}
