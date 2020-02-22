@@ -8,7 +8,7 @@ from django.contrib.auth.forms import (
     AuthenticationForm,
 )
 from django.conf import settings
-from .models import User, UserInvite, UserGroup
+from .models import User
 
 
 class UserChangeForm(BaseUserChangeForm):
@@ -90,7 +90,6 @@ class EditUserForm(forms.ModelForm):
         fields = (
             'name',
             'email',
-            'language',
         )
 
     def clean_email(self):
@@ -156,63 +155,10 @@ class UserAuthForm(AuthenticationForm):
 class EditUserProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('name', 'role', 'time_zone', 'language')
-
-
-class EditUserAvatarForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ('avatar',)
+        fields = ('name',)
 
 
 class EditUserEmailForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email',)
-
-
-class EditUserSystemPermissionsForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = (
-            'is_internal',
-            'is_administrator',
-        )
-
-
-class EditUserGroupsForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ('user_groups',)
-        widgets = {
-            'user_groups': forms.CheckboxSelectMultiple,
-        }
-
-
-class UserInviteForm(forms.ModelForm):
-    class Meta:
-        model = UserInvite
-        fields = ('email', 'is_administrator', 'user_groups')
-        widgets = {
-            'user_groups': forms.CheckboxSelectMultiple,
-        }
-
-
-class UserGroupForm(forms.ModelForm):
-    class Meta:
-        model = UserGroup
-        fields = ('name',)
-
-
-class UserManageAddForm(UserCreationForm):
-    class Meta:
-        model = User
-        fields = (
-            'email', 'name', 'role', 'time_zone',
-            'avatar',
-            'is_internal', 'is_administrator',
-            'language', 'user_groups',
-        )
-        widgets = {
-            'user_groups': forms.CheckboxSelectMultiple,
-        }

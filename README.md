@@ -16,3 +16,10 @@ This project includes:
 1. Settings modules
 2. Django commands for renaming your project and creating a superuser
 3. A cli tool for setting environment variables for deployment
+
+## Basics
+
+Before working with a project add a new line to your `/etc/hosts` 
+(replace `demo` with your real project name):
+
+    127.0.0.1    demo.local

@@ -1,40 +1,17 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import (
-    User,
-    FacebookProfile,
-    GoogleProfile,
-    UserInvite,
-    UserGroup,
-)
+from .models import User
 from .forms import UserChangeForm, UserCreationForm
 
 
-class FacebookProfileInline(admin.StackedInline):
-    model = FacebookProfile
-
-
-class GoogleProfileInline(admin.StackedInline):
-    model = GoogleProfile
-
-
+@admin.register(User)
 class UserAdmin(BaseUserAdmin):
     # add_form_template = 'accounts/admin/auth/user/add_form.html'
     fieldsets = (
         (None, {
             'fields': (
-                'email', 'name', 'role', 'phone',
-                'language',
-                'time_zone',
-                'avatar', 'avatar_text', 'avatar_color',
-                'data',
-                'is_internal', 'is_administrator', 'user_groups',
-                'one_time_link_support',
-                'permanent_activation_link',
-                'permanent_activation_token',
-                'hidden_section_keys', 'hidden_site_keys',
-                'is_readonly',
+                'email', 'name',
                 'password',
             )}),
         (_('Permissions'), {
@@ -59,24 +36,18 @@ class UserAdmin(BaseUserAdmin):
     )
 
     list_display = (
-        'email', 'name', 'role', 'phone',
-        'language',
-        'time_zone',
-        'avatar_text', 'avatar_color_preview',
-        'is_internal', 'is_administrator',
+        'email', 'name',
         'is_staff', 'is_superuser', 'is_active',
-        'date_joined', 'last_login', 'has_usable_password', 'account_activation_url', 'is_readonly',
+        'date_joined', 'last_login', 'has_usable_password',
     )
     list_filter = (
-        'is_internal', 'is_administrator',
         'is_staff', 'is_superuser',
         'is_active', 'groups',
     )
-    search_fields = ('email', 'name', 'phone', 'role')
+    search_fields = ('email', 'name')
     ordering = ('email', '-date_joined')
     date_hierarchy = 'date_joined'
-    filter_horizontal = ('groups', 'user_permissions', 'user_groups')
-    inlines = [FacebookProfileInline, GoogleProfileInline]
+    filter_horizontal = ('groups', 'user_permissions')
 
     form = UserChangeForm
     add_form = UserCreationForm
@@ -112,48 +83,3 @@ class UserAdmin(BaseUserAdmin):
             q.save()
     set_unusable_password.short_description = \
         _('Set unusable password')
-
-    def avatar_color_preview(self, obj):
-        from django.utils.html import mark_safe
-        return mark_safe(
-            '<span style="background:{color};padding:2px 4px;color:white;'
-            'border-radius:2px;font-family:monospace;">{color}</span>'.format(color=obj.avatar_color))
-
-    def account_activation_url(self, obj):
-        from django.utils.html import mark_safe
-        if obj.one_time_link_support:
-            url = obj.get_account_activation_url()
-            if url:
-                return mark_safe('<a href="%s" target="_blank">Activation link</a>' % url)
-        else:
-            return 'Not supported'
-    account_activation_url.short_description = \
-        _('Activation URL')
-
-admin.site.register(User, UserAdmin)
-
-
-@admin.register(UserInvite)
-class UserInviteAdmin(admin.ModelAdmin):
-    list_display = (
-        'email', 'sent_by', 'added', 'is_internal', 'is_administrator',
-        'registered_user', 'registration_date')
-    date_hierarchy = 'added'
-    search_fields = ('email',)
-    list_filter = ('is_internal',)
-    raw_id_fields = ('sent_by', 'registered_user')
-    actions = [
-        'send_to_email',
-    ]
-
-    def send_to_email(self, request, queryset):
-        for q in queryset:
-            q.send_to_email()
-
-    send_to_email.short_description = _('Send to email')
-
-
-@admin.register(UserGroup)
-class UserGroupAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-    search_fields = ('name',)
