@@ -3,8 +3,6 @@ from django.urls import reverse
 from django.test import TestCase
 from django.conf import settings
 from collections import namedtuple
-from oauth2client import client
-from ..facebook import GraphAPI
 from ..models import User
 
 
@@ -52,7 +50,7 @@ class LoginViewTest(BaseViewTests):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.redirect_chain,
-            [(reverse('personal_information'), 302)],
+            [(reverse('index'), 302)],
         )
 
     def test_login_page_redirection_loop(self):
@@ -73,7 +71,7 @@ class LoginViewTest(BaseViewTests):
 
         self.assertEqual(
             response.redirect_chain,
-            [(reverse('personal_information'), 302)],
+            [(reverse('index'), 302)],
         )
 
         self.assertTrue(response.context['user'].is_active)
@@ -91,7 +89,7 @@ class RegisterViewTests(BaseViewTests):
 
         self.assertEqual(
             response.redirect_chain,
-            [(reverse('personal_information'), 302)],
+            [(reverse('index'), 302)],
         )
 
     def test_form_render(self):
@@ -113,185 +111,5 @@ class RegisterViewTests(BaseViewTests):
             follow=True)
         self.assertEqual(response.status_code, 200)
 
-        self.assertEqual(
-            response.redirect_chain,
-            [(reverse('personal_information'), 302)],
-        )
-
         u = User.objects.get(email='blah@mail.com')
         self.assertEqual(u.name, 'Emilia Clarke')
-
-
-def _fake_get_user_from_cookie(*args):
-    return {
-        'access_token': 'yummy',
-    }
-
-
-class FacebookLoginTests(TestCase):
-    def setUp(self):
-        self.u1 = User.objects.create_user(
-            'demo@mail.com', 'John Doe', 'demo')
-
-    @patch(
-        'apps.accounts.facebook.get_user_from_cookie',
-        _fake_get_user_from_cookie)
-    @patch.object(GraphAPI, 'get_object', autospec=True)
-    def test_login_for_existing_user(
-            self,
-            mock_get_object):
-        mock_get_object.return_value = {
-            'access_token': 'yummi',
-            'email': 'demo@mail.com',
-            'name': 'John Doe',
-            'gender': 'male',
-            'id': '984851601558000',
-            'link':
-            'https://www.facebook.com/app_scoped_user_id/984851601558000/',
-            'timezone': 3,
-            'locale': 'en_US',
-        }
-        response = self.client.get(reverse('fb_login'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('redirect_url', response.context)
-        self.assertEqual(
-            int(self.client.session['_auth_user_id']), self.u1.pk)
-
-        user = User.objects.get(pk=self.u1.pk)
-        fbp = user.facebook_profile
-        self.assertEqual(fbp.userid, '984851601558000')
-
-    @patch(
-        'apps.accounts.facebook.get_user_from_cookie',
-        _fake_get_user_from_cookie)
-    @patch.object(GraphAPI, 'get_object', autospec=True)
-    def test_login_for_new_user(
-            self,
-            mock_get_object):
-        mock_get_object.return_value = {
-            'access_token': 'yummi',
-            'email': 'demo2@mail.com',
-            'name': 'Leslie Judd',
-            'gender': 'female',
-            'id': '984851601558000',
-            'link':
-            'https://www.facebook.com/app_scoped_user_id/984851601558000/',
-            'timezone': 3,
-            'locale': 'en_US',
-
-        }
-        response = self.client.get(reverse('fb_login'))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('redirect_url', response.context)
-
-        user = User.objects.get(pk=int(self.client.session['_auth_user_id']))
-        self.assertEqual(user.name, 'Leslie Judd')
-        self.assertEqual(user.email, 'demo2@mail.com')
-
-        fbp = user.facebook_profile
-        self.assertEqual(fbp.userid, '984851601558000')
-
-    @patch(
-        'apps.accounts.facebook.get_user_from_cookie',
-        _fake_get_user_from_cookie)
-    @patch.object(GraphAPI, 'get_object', autospec=True)
-    def test_already_logged_in_user(
-            self,
-            mock_get_object):
-        mock_get_object.return_value = {
-            'access_token': 'yummi',
-            'email': 'demo@mail.com',
-            'name': 'John Doe',
-            'gender': 'male',
-            'id': '984851601558000',
-            'link':
-            'https://www.facebook.com/app_scoped_user_id/984851601558000/',
-            'timezone': 3,
-            'locale': 'en_US',
-
-        }
-        self.client.force_login(self.u1)
-        response = self.client.get(reverse('fb_login'))
-        self.assertEqual(response.status_code, 200)
-        self.assertNotIn('redirect_url', response.context)
-        self.assertIn('Ви вже залогінені'.encode('utf8'), response.content)
-
-
-class GoogleLoginTests(TestCase):
-    def setUp(self):
-        self.u1 = User.objects.create_user(
-            'demo@mail.com', 'John Doe', 'demo')
-
-    @patch.object(client, 'credentials_from_code', autospec=True)
-    def test_login_for_existing_user(
-            self,
-            mock_credentials_from_code):
-        Credentials = namedtuple('Credentials', 'id_token')
-        mock_credentials_from_code.return_value = Credentials(
-            id_token={
-                'sub': '111111',
-                'email': 'demo@mail.com',
-                'name': 'John Doe',
-            },
-        )
-        response = self.client.post(
-            reverse('gg_login'), data={'data': 'demo'})
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            str(response.content, encoding='utf8'),
-            {'redirect_url': settings.LOGIN_REDIRECT_URL},
-        )
-        self.assertEqual(
-            int(self.client.session['_auth_user_id']), self.u1.pk)
-
-        user = User.objects.get(pk=self.u1.pk)
-        ggp = user.google_profile
-        self.assertEqual(ggp.userid, '111111')
-
-    @patch.object(client, 'credentials_from_code', autospec=True)
-    def test_login_for_new_user(
-            self,
-            mock_credentials_from_code):
-        Credentials = namedtuple('Credentials', 'id_token')
-        mock_credentials_from_code.return_value = Credentials(
-            id_token={
-                'sub': '111111',
-                'email': 'demo2@mail.com',
-                'name': 'Leslie Judd',
-            },
-        )
-        response = self.client.post(
-            reverse('gg_login'), data={'data': 'demo'})
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            str(response.content, encoding='utf8'),
-            {'redirect_url': reverse('personal_information')},
-        )
-
-        user = User.objects.get(pk=int(self.client.session['_auth_user_id']))
-        self.assertEqual(user.name, 'Leslie Judd')
-        self.assertEqual(user.email, 'demo2@mail.com')
-
-        ggp = user.google_profile
-        self.assertEqual(ggp.userid, '111111')
-
-    @patch.object(client, 'credentials_from_code', autospec=True)
-    def test_already_logged_in_user(
-            self,
-            mock_credentials_from_code):
-        Credentials = namedtuple('Credentials', 'id_token')
-        mock_credentials_from_code.return_value = Credentials(
-            id_token={
-                'sub': '111111',
-                'email': 'demo@mail.com',
-                'name': 'John Doe',
-            },
-        )
-        self.client.force_login(self.u1)
-        response = self.client.post(
-            reverse('gg_login'), data={'data': 'demo'})
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            str(response.content, encoding='utf8'),
-            {},
-        )

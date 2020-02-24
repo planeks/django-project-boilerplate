@@ -27,7 +27,7 @@ Before working with a project add a new line to your `/etc/hosts`
 
 ### How to run local development server
 
-    DJANGO_SETTINGS_MODULE=<projectname>.settings.development ./manage.py runserver
+    DJANGO_SETTINGS_MODULE=demo.settings.development ./manage.py runserver
 
 If you need to load some alternate configuration you can use the next command:
 
@@ -37,9 +37,12 @@ $ sh -ac ". <name_of_dotenv_file>; python manage.py runserver"
 
 ### How to create new superuser
 
-    DJANGO_SETTINGS_MODULE=<projectname>.settings.development ./manage.py createsuperuser
+    DJANGO_SETTINGS_MODULE=demo.settings.development ./manage.py createsuperuser
 
 ### How to run Celery worker
 
-    DJANGO_SETTINGS_MODULE=<projectname>.settings.development celery -A <projectname> worker -B --loglevel=info
+    DJANGO_SETTINGS_MODULE=demo.settings.development celery -A demo worker -B --loglevel=info
 
+### How to run unit tests
+
+    DJANGO_SETTINGS_MODULE=demo.settings.testing ./manage.py test

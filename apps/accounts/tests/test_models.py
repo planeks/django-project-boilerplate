@@ -34,12 +34,6 @@ class UserTests(TestCase):
         self.assertEqual(str(self.u2), 'Annie Lennox')
         self.assertEqual(str(self.u3), 'Leslie JJ Mills')
 
-    def test_get_email_md5_hash(self):
-        import hashlib
-        self.assertEqual(self.u1.get_email_md5_hash(), hashlib.md5(b'demo@mail.com').hexdigest())
-        self.assertEqual(self.u2.get_email_md5_hash(), hashlib.md5(b'demo2@mail.com').hexdigest())
-        self.assertEqual(self.u3.get_email_md5_hash(), hashlib.md5(b'robert.downey@mail.com').hexdigest())
-
     def test_has_usable_password(self):
         self.assertTrue(self.u1.has_usable_password())
         self.assertTrue(self.u2.has_usable_password())
