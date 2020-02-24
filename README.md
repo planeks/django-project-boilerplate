@@ -7,15 +7,22 @@ This repository is a boilerplate Django project for quickly getting started.
 Steps:
 
 1. Clone/pull/download this repository
-2. Create a virtualenv with `virtualenv env` and install dependencies with `pip install -r requirements.txt`
-3. Configure your .env variables
-4. Rename your project with `python manage.py rename <yourprojectname> <newprojectname>`
+2. Create a virtualenv with `python3 -m venv env_py37` and install dependencies with `pip install -r requirements.txt`
+3. Create directories `email`, `media`, `staticfiles`
+4. Configure your `.env` variables
 
 This project includes:
 
 1. Settings modules
 2. Django commands for renaming your project and creating a superuser
-3. A cli tool for setting environment variables for deployment
+3. Basic templates with Bootstrap4 support
+4. A rich set of useful template tags
+
+## How to rename project
+
+1. Rename `demo` directory which contains `wsgi.py` file
+2. Add proper line to your `.env` file, like `PROJECT_NAME=<project_name>`
+
 
 ## Basics
 
