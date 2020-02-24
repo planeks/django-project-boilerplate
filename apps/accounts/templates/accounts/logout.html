@@ -1,10 +1,7 @@
-{% extends "manage/base_nonav.html" %}
+{% extends "accounts/base_auth.html" %}
 
 {% block extra_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 
 {% block content %}
-    User: {{ request.user }}
-    <script>
-
-    </script>
+<div class="alert alert-info">{% trans "Thank you for using our service." %}</div>
 {% endblock %}

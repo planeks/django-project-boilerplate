@@ -23,47 +23,16 @@ def debug_context(context):
     else:
         return ''
 
+
 # Settings
 
-@register.simple_tag
-def tabbli_version():
-    return settings.TABBLI_VERSION
 
 @register.simple_tag
 def load_option(option, default=None):
     return getattr(settings, option, default)
 
 
-@register.simple_tag
-def get_platform_languages():
-    from apps.core.models import Language
-    return Language.objects.all()
-
-
-@register.simple_tag(takes_context=True)
-def get_manage_language(context):
-    from apps.core.models import Language
-    default_language = Language.objects.get_default_language()
-    _manage_language = context['request'].session.get(
-        'manage_language', default_language.language if default_language else 'en')
-    manage_language = default_language
-    if default_language.language != _manage_language:
-        manage_language = Language.objects.filter(language=_manage_language).first() or default_language
-    return manage_language
-
-
-@register.filter
-def translated_value(struct, request):
-    from apps.core.utils import get_translated_value
-    manage_language = request.session.get('manage_language')
-    return get_translated_value(struct, lang=manage_language)
-
-
 # Helpful tags and filters
-
-@register.filter
-def is_error_dict(value):
-    return type(value) is dict and 'error' in value
 
 
 @register.filter
@@ -251,24 +220,6 @@ def append_to_list(value, arg):
     return value.append(arg)
 
 
-@register.simple_tag
-def optional_url(url_name, *args, **kwargs):
-    from django.urls import reverse, NoReverseMatch
-    try:
-        return reverse(url_name, args=args, kwargs=kwargs)
-    except NoReverseMatch:
-        return '#unknown-url'
-
-
-@register.simple_tag
-def url_with_optional_args(url_name, *args, **kwargs):
-    from django.urls import reverse
-    return reverse(
-        url_name,
-        args=[x for x in args if x],
-        kwargs={k: v for k, v in kwargs.items() if v})
-
-
 @register.filter
 def beautify_comma_separation(value):
     if value is not None:
@@ -390,35 +341,6 @@ def strip_items(iterable):
 @register.filter
 def join_list(iterable, delimiter=','):
     return delimiter.join([str(x) for x in iterable])
-
-
-@register.filter
-def money(value, template_name='price_template'):
-    if value is None or value == '':
-        value = 0.0
-    b_value = '{:,}'.format(int(value)).replace(',', ' ')
-
-    _template = '<span class="money" data-value="%s" data-currency="%s">%s</span>'
-    currency_code = getattr(settings, 'DEFAULT_CURRENCY', 'default')
-
-    chunks = template_name.split(',')
-    if len(chunks) == 2:
-        currency_code, template_name = chunks[0], chunks[1]
-    elif len(chunks) == 1:
-        if template_name in settings.CURRENCIES:
-            currency_code = template_name
-            template_name = 'price_template'
-
-    if hasattr(settings, 'CURRENCIES'):
-        currency_config = settings.CURRENCIES.get(currency_code)
-        return mark_safe(
-            _template % (
-                value,
-                currency_code,
-                currency_config.get(template_name, '%s') % b_value)
-            )
-    else:
-        return _template % (value, currency_code, b_value)
 
 
 @register.filter

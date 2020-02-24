@@ -20,6 +20,7 @@ ipython==7.12.0
 ipython-genutils==0.2.0
 jedi==0.16.0
 kombu==4.6.7
+Markdown==3.2.1
 parso==0.6.1
 pexpect==4.8.0
 pickleshare==0.7.5
@@ -28,6 +29,7 @@ prompt-toolkit==3.0.3
 psycopg2-binary==2.8.4
 ptyprocess==0.6.0
 Pygments==2.5.2
+python-decouple==3.3
 pytz==2019.3
 redis==3.4.1
 sentry-sdk==0.14.1

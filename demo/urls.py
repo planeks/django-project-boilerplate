@@ -8,7 +8,8 @@ admin.site.site_header = 'Admin console'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('', include('apps.core.urls')),
+    path('', include('apps.core.urls')),
+    path('', include('apps.accounts.urls')),
     # path('select2/', include('django_select2.urls')),
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
 ]

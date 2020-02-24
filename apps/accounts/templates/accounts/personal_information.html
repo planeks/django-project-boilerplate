@@ -1,4 +1,4 @@
-{% extends "accounts/profile.html" %}
+{% extends "accounts/base_profile.html" %}
 {% load i18n static core_tags %}
 
 {% block title %}{% trans "Personal information" %}{% endblock %}
@@ -17,30 +17,11 @@
                 <td>{% trans "Email" %}</td>
                 <td><a href="mailto:{{ request.user.email }}">{{ request.user.email }}</a></td>
             </tr>
-            <tr>
-                <td>{% trans "Phone" %}</td>
-                <td><a href="tel:{{ request.user.phone }}">{{ request.user.phone }}</a></td>
-            </tr>
         </table>
     </div>
 </div>
 
-{% with members=request.user.get_company_memberships %}
-    {% if members %}
-    <div class="mt-4">
-    <h3>{% trans "My companies" %}</h3>
-    <table class="table table-bordered">
-        {% for m in members %}
-        <tr>
-            <td><a href="{% url 'company_manage' m.company_id %}">{{ m.company }}</a></td>
-        </tr>
-        {% endfor %}
-    </table>
-    </div>
-    {% endif %}
-{% endwith %}
-
 <div class="mt-4">
-    <a href="{% url 'logout' %}" class="btn btn-dark">{% trans "Logout" %}</a>
+    <a href="{% url 'edit_personal_information' %}" class="btn btn-secondary">{% trans "Edit profile" %}</a>
 </div>
 {% endblock %}

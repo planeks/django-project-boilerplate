@@ -1,9 +1,0 @@
-{% extends "email/base.html" %}
-
-{% block content %}
-    <h1>Hello from Tabbli</h1>
-
-    <p>You have an invite from user "{{ invite.sent_by }}". Please use the next link for register:</p>
-
-    <a href="{{ invite.get_registration_url }}">{{ invite.get_registration_url }}</a>
-{% endblock %}
