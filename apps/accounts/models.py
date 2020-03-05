@@ -10,7 +10,6 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
-import uuid
 import pytz
 import random
 import string
@@ -68,7 +67,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     Email field are used for logging in.
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(_('Email'), max_length=255, unique=True)
     name = models.CharField(_('Full name'), max_length=255)
 
