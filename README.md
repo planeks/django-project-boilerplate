@@ -42,6 +42,13 @@ If you need to load some alternate configuration you can use the next command:
 $ sh -ac ". <name_of_dotenv_file>; python manage.py runserver"
 ```
 
+Alternatively, if you are working with same configuration you can add the next line
+to your `env_py37/bin/activate`:
+
+```bash
+export $(.env | xargs)
+```
+
 ### How to create new superuser
 
     DJANGO_SETTINGS_MODULE=demo.settings.development ./manage.py createsuperuser
