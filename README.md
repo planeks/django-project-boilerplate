@@ -60,3 +60,8 @@ export $(.env | xargs)
 ### How to run unit tests
 
     DJANGO_SETTINGS_MODULE=demo.settings.testing ./manage.py test
+
+### How to create the new app
+
+    mkdir djapps/newapp
+    DJANGO_SETTINGS_MODULE=demo.settings.development ./manage.py startapp newapp djapps/newapp
