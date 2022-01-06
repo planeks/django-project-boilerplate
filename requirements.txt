@@ -6,15 +6,13 @@
 #
 amqp==5.0.9
     # via kombu
-appnope==0.1.2
-    # via ipython
 asgiref==3.4.1
     # via django
 backcall==0.2.0
     # via ipython
 billiard==3.6.4.0
     # via celery
-celery==5.2.1
+celery==5.2.2
     # via -r requirements.in
 certifi==2021.10.8
     # via
