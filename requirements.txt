@@ -6,8 +6,6 @@
 #
 amqp==5.0.9
     # via kombu
-appnope==0.1.2
-    # via ipython
 asgiref==3.4.1
     # via django
 backcall==0.2.0
@@ -60,7 +58,7 @@ elasticsearch==7.16.1
     # via -r requirements.in
 gunicorn==20.1.0
     # via -r requirements.in
-ipython==7.30.1
+ipython==7.31.1
     # via -r requirements.in
 jedi==0.18.1
     # via ipython
