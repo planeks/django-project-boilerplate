@@ -6,8 +6,6 @@
 #
 amqp==5.0.9
     # via kombu
-appnope==0.1.2
-    # via ipython
 asgiref==3.4.1
     # via django
 backcall==0.2.0
@@ -78,7 +76,7 @@ pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
-pillow==8.4.0
+pillow==9.0.1
     # via
     #   -r requirements.in
     #   easy-thumbnails
