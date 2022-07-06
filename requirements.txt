@@ -6,8 +6,6 @@
 #
 amqp==5.0.9
     # via kombu
-appnope==0.1.2
-    # via ipython
 asgiref==3.4.1
     # via django
 backcall==0.2.0
@@ -66,7 +64,7 @@ jedi==0.18.1
     # via ipython
 kombu==5.2.2
     # via celery
-lxml==4.7.1
+lxml==4.9.1
     # via svglib
 markdown==3.3.6
     # via -r requirements.in
